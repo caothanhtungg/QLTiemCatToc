@@ -41,21 +41,21 @@ Partial Class frmDichVu
         Me.Label9 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.PictureBox2 = New System.Windows.Forms.PictureBox()
-        Me.pbThem = New System.Windows.Forms.PictureBox()
-        Me.pbluu = New System.Windows.Forms.PictureBox()
-        Me.pbSua = New System.Windows.Forms.PictureBox()
         Me.pbxoa = New System.Windows.Forms.PictureBox()
+        Me.pbSua = New System.Windows.Forms.PictureBox()
+        Me.pbluu = New System.Windows.Forms.PictureBox()
+        Me.pbThem = New System.Windows.Forms.PictureBox()
+        Me.PictureBox2 = New System.Windows.Forms.PictureBox()
         CType(Me.dgvDV, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.PictureBox9, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.PictureBox10, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel1.SuspendLayout()
-        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.pbThem, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.pbluu, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.pbSua, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbxoa, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.pbSua, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.pbluu, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.pbThem, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'txtDonGia
@@ -270,36 +270,15 @@ Partial Class frmDichVu
         Me.Panel1.Size = New System.Drawing.Size(456, 388)
         Me.Panel1.TabIndex = 73
         '
-        'PictureBox2
+        'pbxoa
         '
-        Me.PictureBox2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), System.Drawing.Image)
-        Me.PictureBox2.Location = New System.Drawing.Point(0, 0)
-        Me.PictureBox2.Name = "PictureBox2"
-        Me.PictureBox2.Size = New System.Drawing.Size(456, 388)
-        Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
-        Me.PictureBox2.TabIndex = 0
-        Me.PictureBox2.TabStop = False
-        '
-        'pbThem
-        '
-        Me.pbThem.Image = Global.QLTiemCatToc.My.Resources.Resources.them
-        Me.pbThem.Location = New System.Drawing.Point(13, 256)
-        Me.pbThem.Name = "pbThem"
-        Me.pbThem.Size = New System.Drawing.Size(126, 42)
-        Me.pbThem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
-        Me.pbThem.TabIndex = 71
-        Me.pbThem.TabStop = False
-        '
-        'pbluu
-        '
-        Me.pbluu.Image = Global.QLTiemCatToc.My.Resources.Resources.luu
-        Me.pbluu.Location = New System.Drawing.Point(13, 311)
-        Me.pbluu.Name = "pbluu"
-        Me.pbluu.Size = New System.Drawing.Size(126, 42)
-        Me.pbluu.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
-        Me.pbluu.TabIndex = 70
-        Me.pbluu.TabStop = False
+        Me.pbxoa.Image = Global.QLTiemCatToc.My.Resources.Resources.xoa
+        Me.pbxoa.Location = New System.Drawing.Point(170, 311)
+        Me.pbxoa.Name = "pbxoa"
+        Me.pbxoa.Size = New System.Drawing.Size(126, 42)
+        Me.pbxoa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.pbxoa.TabIndex = 72
+        Me.pbxoa.TabStop = False
         '
         'pbSua
         '
@@ -311,22 +290,43 @@ Partial Class frmDichVu
         Me.pbSua.TabIndex = 73
         Me.pbSua.TabStop = False
         '
-        'pbxoa
+        'pbluu
         '
-        Me.pbxoa.Image = Global.QLTiemCatToc.My.Resources.Resources.xoa
-        Me.pbxoa.Location = New System.Drawing.Point(170, 311)
-        Me.pbxoa.Name = "pbxoa"
-        Me.pbxoa.Size = New System.Drawing.Size(126, 42)
-        Me.pbxoa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
-        Me.pbxoa.TabIndex = 72
-        Me.pbxoa.TabStop = False
+        Me.pbluu.Image = Global.QLTiemCatToc.My.Resources.Resources.luu
+        Me.pbluu.Location = New System.Drawing.Point(13, 311)
+        Me.pbluu.Name = "pbluu"
+        Me.pbluu.Size = New System.Drawing.Size(126, 42)
+        Me.pbluu.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.pbluu.TabIndex = 70
+        Me.pbluu.TabStop = False
+        '
+        'pbThem
+        '
+        Me.pbThem.Image = Global.QLTiemCatToc.My.Resources.Resources.them
+        Me.pbThem.Location = New System.Drawing.Point(13, 256)
+        Me.pbThem.Name = "pbThem"
+        Me.pbThem.Size = New System.Drawing.Size(126, 42)
+        Me.pbThem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.pbThem.TabIndex = 71
+        Me.pbThem.TabStop = False
+        '
+        'PictureBox2
+        '
+        Me.PictureBox2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), System.Drawing.Image)
+        Me.PictureBox2.Location = New System.Drawing.Point(0, 0)
+        Me.PictureBox2.Name = "PictureBox2"
+        Me.PictureBox2.Size = New System.Drawing.Size(456, 388)
+        Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.PictureBox2.TabIndex = 0
+        Me.PictureBox2.TabStop = False
         '
         'frmDichVu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1108, 748)
+        Me.ClientSize = New System.Drawing.Size(1108, 580)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.Label9)
@@ -346,11 +346,11 @@ Partial Class frmDichVu
         CType(Me.PictureBox10, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
-        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.pbThem, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.pbluu, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.pbSua, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.pbxoa, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.pbSua, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.pbluu, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.pbThem, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

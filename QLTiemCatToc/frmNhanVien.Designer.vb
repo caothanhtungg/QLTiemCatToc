@@ -342,7 +342,7 @@ Partial Class frmNhanVien
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(15, Byte), Integer), CType(CType(23, Byte), Integer), CType(CType(42, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1108, 683)
+        Me.ClientSize = New System.Drawing.Size(1108, 580)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Label9)
         Me.Controls.Add(Me.lblHello)
