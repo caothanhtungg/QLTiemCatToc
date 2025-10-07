@@ -101,5 +101,51 @@ Public Class frmDichVu
         Me.Close()
     End Sub
 
+    Private Sub pbSua_Click(sender As Object, e As EventArgs) Handles pbSua.Click
+        ' 1) Kiểm tra tối thiểu
+        If String.IsNullOrWhiteSpace(txtMaDV.Text) Then
+            MessageBox.Show("Hãy chọn 1 dịch vụ trong bảng trước khi sửa.") : Exit Sub
+        End If
+        If String.IsNullOrWhiteSpace(txtTenDV.Text) Then
+            MessageBox.Show("Tên dịch vụ không được trống.") : txtTenDV.Focus() : Exit Sub
+        End If
 
+        Dim gia As Decimal
+        If Not Decimal.TryParse(txtDonGia.Text.Trim(), gia) OrElse gia < 0D Then
+            MessageBox.Show("Đơn giá phải là số ≥ 0.") : txtDonGia.Focus() : Exit Sub
+        End If
+
+        ' 2) Cập nhật
+        Dim sql As String =
+    "UPDATE DichVu
+ SET TenDV=@TenDV,
+     DonGia=@DonGia,
+     IsActive=@IsActive
+ WHERE MaDV=@MaDV"
+
+        Dim prms As New List(Of SqlParameter) From {
+            New SqlParameter("@MaDV", txtMaDV.Text.Trim()),
+            New SqlParameter("@TenDV", txtTenDV.Text.Trim()),
+            New SqlParameter("@DonGia", gia),
+            New SqlParameter("@IsActive", If(chkActive.Checked, 1, 0))
+        }
+
+        Try
+            Dim n = DbHelper.Exec(sql, prms) ' dùng đúng hàm Exec bạn đưa
+            If n > 0 Then
+                MessageBox.Show("Đã cập nhật dịch vụ.")
+                LoadGrid() ' hoặc LoadGrid(txtTimDV.Text) nếu có ô tìm
+            Else
+                MessageBox.Show("Không có bản ghi nào được cập nhật.")
+            End If
+        Catch ex As SqlException
+            If ex.Number = 2627 OrElse ex.Number = 2601 Then
+                MessageBox.Show("Trùng dữ liệu (UNIQUE).")
+            Else
+                MessageBox.Show("Lỗi SQL: " & ex.Message)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Lỗi: " & ex.Message)
+        End Try
+    End Sub
 End Class

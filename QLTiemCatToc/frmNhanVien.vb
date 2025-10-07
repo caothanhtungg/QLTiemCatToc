@@ -93,4 +93,53 @@ Public Class frmNhanVien
 
         LoadGrid()
     End Sub
+
+    Private Sub pbSua_Click(sender As Object, e As EventArgs) Handles pbSua.Click
+        ' === VALIDATE ===
+        If String.IsNullOrWhiteSpace(txtMaNV.Text) Then
+            MessageBox.Show("Hãy chọn 1 nhân viên trước khi sửa.") : Exit Sub
+        End If
+        If String.IsNullOrWhiteSpace(txtTenNV.Text) Then
+            MessageBox.Show("Tên nhân viên không được trống.") : txtTenNV.Focus() : Exit Sub
+        End If
+        Dim sdt = txtSDT.Text.Trim()
+        If sdt <> "" AndAlso Not System.Text.RegularExpressions.Regex.IsMatch(sdt, "^\d{9,11}$") Then
+            MessageBox.Show("Số điện thoại không hợp lệ (9–11 số).") : txtSDT.Focus() : Exit Sub
+        End If
+        ' === /VALIDATE ===
+
+        Dim sql As String =
+    "UPDATE NhanVien
+   SET TenNV=@Ten,
+       SDT=@SDT,
+       VaiTro=@VaiTro,
+       TrangThai=@TT
+ WHERE MaNV=@Ma"
+
+        Dim ps As New List(Of SqlParameter) From {
+            New SqlParameter("@Ma", Integer.Parse(txtMaNV.Text)),
+            New SqlParameter("@Ten", txtTenNV.Text.Trim()),
+            New SqlParameter("@SDT", If(sdt = "", CType(DBNull.Value, Object), sdt)),
+            New SqlParameter("@VaiTro", If(String.IsNullOrWhiteSpace(cboVaiTro.Text), CType(DBNull.Value, Object), cboVaiTro.Text.Trim())),
+            New SqlParameter("@TT", If(chkTrangThai.Checked, 1, 0))
+        }
+
+        Try
+            Dim n = Exec(sql, ps)   ' dùng đúng hàm Exec của bạn
+            If n > 0 Then
+                MessageBox.Show("Đã cập nhật nhân viên.")
+                LoadGrid()
+            Else
+                MessageBox.Show("Không có bản ghi nào được cập nhật.")
+            End If
+        Catch ex As SqlException
+            If ex.Number = 2627 OrElse ex.Number = 2601 Then
+                MessageBox.Show("Dữ liệu trùng (ví dụ SDT/username UNIQUE).")
+            Else
+                MessageBox.Show("Lỗi SQL: " & ex.Message)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Lỗi: " & ex.Message)
+        End Try
+    End Sub
 End Class

@@ -196,4 +196,58 @@ Public Class frmLichHen
     Private Sub Label10_Click(sender As Object, e As EventArgs) Handles Label10.Click
         Me.Close()
     End Sub
+
+    ' Gọi 1 lần (Form_Load)
+    Private Sub LoadTrangThai()
+        Dim data = New List(Of Object) From {
+            New With {.Text = "Đặt", .Val = 0},
+            New With {.Text = "Hoàn tất", .Val = 1},
+            New With {.Text = "Hủy", .Val = 2}
+        }
+        cboTrangThai.DisplayMember = "Text"
+        cboTrangThai.ValueMember = "Val"
+        cboTrangThai.DataSource = data
+        cboTrangThai.SelectedIndex = -1
+    End Sub
+
+    ' Imports System.Data.SqlClient
+    Private Sub PictureBox4_Click(sender As Object, e As EventArgs) Handles PictureBox4.Click
+        If String.IsNullOrWhiteSpace(txtMaLich.Text) Then
+            MessageBox.Show("Hãy chọn 1 lịch hẹn trước khi sửa.") : Exit Sub
+        End If
+        If cboKhachHang.SelectedValue Is Nothing Then MessageBox.Show("Chưa chọn khách hàng.") : Exit Sub
+        If cboNhanVien.SelectedValue Is Nothing Then MessageBox.Show("Chưa chọn nhân viên.") : Exit Sub
+        If String.IsNullOrWhiteSpace(cboGio.Text) Then MessageBox.Show("Chưa chọn giờ (HH:mm).") : Exit Sub
+        If String.IsNullOrWhiteSpace(cboTrangThai.Text) Then MessageBox.Show("Chưa chọn trạng thái.") : Exit Sub
+
+        Dim gio As TimeSpan
+        If Not TimeSpan.TryParse(cboGio.Text.Trim(), gio) Then
+            MessageBox.Show("Giờ không hợp lệ (HH:mm).") : Exit Sub
+        End If
+
+        Dim sql As String =
+    "UPDATE LichHen
+ SET MaKH=@MaKH, MaNV=@MaNV, Ngay=@Ngay, Gio=@Gio, MaDV=@MaDV, GhiChu=@GhiChu, TrangThai=@TrangThai
+ WHERE MaLich=@MaLich"    ' <-- dùng MaLich + @MaLich
+
+        Dim prms As New List(Of SqlParameter) From {
+            New SqlParameter("@MaLich", CInt(txtMaLich.Text)),                     ' <-- thêm đúng tham số
+            New SqlParameter("@MaKH", CInt(cboKhachHang.SelectedValue)),
+            New SqlParameter("@MaNV", CInt(cboNhanVien.SelectedValue)),
+            New SqlParameter("@Ngay", dtpNgay.Value.Date),
+            New SqlParameter("@Gio", gio),
+            New SqlParameter("@MaDV", CInt(cboDichVu.SelectedValue)),
+            New SqlParameter("@GhiChu", If(String.IsNullOrWhiteSpace(txtGhiChu.Text), CType(DBNull.Value, Object), txtGhiChu.Text.Trim())),
+            New SqlParameter("@TrangThai", cboTrangThai.Text)                      ' bạn đang lưu text
+        }
+
+        Dim n = DbHelper.Exec(sql, prms)
+        If n > 0 Then
+            MessageBox.Show("Đã cập nhật lịch hẹn.")
+            LoadGrid()
+        Else
+            MessageBox.Show("Không có bản ghi nào được cập nhật.")
+        End If
+    End Sub
+
 End Class
