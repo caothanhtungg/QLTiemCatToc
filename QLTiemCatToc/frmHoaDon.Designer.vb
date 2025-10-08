@@ -486,9 +486,9 @@ Partial Class frmHoaDon
         Me.Label11.ForeColor = System.Drawing.Color.White
         Me.Label11.Location = New System.Drawing.Point(73, 9)
         Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(311, 40)
+        Me.Label11.Size = New System.Drawing.Size(312, 40)
         Me.Label11.TabIndex = 69
-        Me.Label11.Text = "📅 Quản Lý Lịch Hẹn"
+        Me.Label11.Text = "📅 Quản Lý Hóa Đơn"
         '
         'PictureBox9
         '
