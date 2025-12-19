@@ -86,4 +86,8 @@ Public Class frmDangNhap
     Private Sub PictureBox4_Click(sender As Object, e As EventArgs)
 
     End Sub
+
+    Private Sub txtUser_TextChanged(sender As Object, e As EventArgs) Handles txtUser.TextChanged
+
+    End Sub
 End Class

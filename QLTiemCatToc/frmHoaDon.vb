@@ -1,7 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Public Class frmHoaDon
     Private Sub frmHoaDon_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Hiển thị chào user
         lblHello.Text = "Xin chào, " & CurrentUser & If(CurrentRole = "Admin", " (Admin)", " (NV)")
         lblDate.Text = DateTime.Now.ToString("dd/MM/yyyy")
         dgvHD.AllowUserToAddRows = False : dgvCT.AllowUserToAddRows = False
@@ -25,7 +24,6 @@ Public Class frmHoaDon
         dgvHD.DataSource = GetTable("SELECT MaHD, MaKH, NgayLap, GiamGia, Thue FROM HoaDon ORDER BY MaHD DESC")
     End Sub
 
-    ' chọn hóa đơn → load chi tiết + hiển thị tổng
     Private Sub dgvHD_CellClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvHD.CellClick
         If e.RowIndex < 0 Then Return
         Dim r = dgvHD.Rows(e.RowIndex)
@@ -42,7 +40,6 @@ Public Class frmHoaDon
          WHERE ct.MaHD=@ma",
         New List(Of SqlParameter) From {New SqlParameter("@ma", CInt(txtMaHD.Text))})
 
-        ' tổng tiền qua view (an toàn với NULL)
         Dim t = GetTable("SELECT TongThanhToan FROM vw_HoaDonTong WHERE MaHD=@ma",
                          New List(Of SqlClient.SqlParameter) From {New SqlClient.SqlParameter("@ma", CInt(txtMaHD.Text))})
 
@@ -54,14 +51,11 @@ Public Class frmHoaDon
 
     End Sub
 
-    ' chọn DV → tự đổ đơn giá
     Private Sub cboDichVu_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cboDichVu.SelectionChangeCommitted
         Dim dv = DirectCast(cboDichVu.SelectedItem, DataRowView)
         txtDonGia.Text = If(IsDBNull(dv("DonGia")), "0", CDec(dv("DonGia")).ToString())
     End Sub
 
-    ' Xóa chi tiết (theo dịch vụ đang chọn trên lưới)
-    ' Tải lại chi tiết + tổng tiền
     Private Sub RefreshCT()
         dgvCT.DataSource = GetTable(
             "SELECT ct.MaDV, dv.TenDV, ct.SoLuong, ct.DonGia, (ct.SoLuong*ct.DonGia) AS ThanhTien
@@ -80,8 +74,6 @@ Public Class frmHoaDon
     Private Sub btnquaylai_Click(sender As Object, e As EventArgs)
         Me.Close()
     End Sub
-
-
 
     Private Sub PictureBox7_Click(sender As Object, e As EventArgs) Handles PictureBox7.Click
         txtMaHD.Clear()
@@ -117,7 +109,6 @@ Public Class frmHoaDon
         End If
 
         If String.IsNullOrEmpty(txtMaHD.Text) Then
-            ' INSERT + lấy ID mới
             Dim sqlI = "INSERT INTO HoaDon(MaKH, NgayLap, GiamGia, Thue)
                     VALUES(@kh,@ngay,@giam,@thue);
                     SELECT CAST(SCOPE_IDENTITY() AS INT);"
@@ -125,14 +116,13 @@ Public Class frmHoaDon
             txtMaHD.Text = tb.Rows(0)(0).ToString()
             MessageBox.Show("Đã tạo hóa đơn #" & txtMaHD.Text)
         Else
-            ' UPDATE
             ps.Add(New SqlClient.SqlParameter("@ma", CInt(txtMaHD.Text)))
             Dim sqlU = "UPDATE HoaDon SET MaKH=@kh, NgayLap=@ngay, GiamGia=@giam, Thue=@thue WHERE MaHD=@ma"
             Exec(sqlU, ps)
             MessageBox.Show("Đã cập nhật hóa đơn.")
         End If
 
-        LoadHD() ' refresh danh sách hóa đơn
+        LoadHD()
     End Sub
 
     Private Sub PictureBox3_Click(sender As Object, e As EventArgs) Handles PictureBox3.Click
@@ -161,7 +151,6 @@ Public Class frmHoaDon
             New SqlClient.SqlParameter("@gia", gia)
         }
 
-        ' Nếu trùng dịch vụ trong cùng HĐ thì cập nhật số lượng, ngược lại thì thêm mới
         Dim sql =
             "IF EXISTS(SELECT 1 FROM ChiTietHoaDon WHERE MaHD=@ma AND MaDV=@dv)
            UPDATE ChiTietHoaDon SET SoLuong = SoLuong + @sl, DonGia=@gia
@@ -192,7 +181,7 @@ Public Class frmHoaDon
         Catch ex As SqlClient.SqlException
             MessageBox.Show("Lỗi: " & ex.Message)
         End Try
-        RefreshCT() ' nạp lại chi tiết + tổng
+        RefreshCT()
     End Sub
 
     Private Sub PictureBox8_Click(sender As Object, e As EventArgs) Handles PictureBox8.Click
@@ -206,9 +195,7 @@ Public Class frmHoaDon
         }
 
         Try
-            ' 1) Xóa chi tiết trước
             Exec("DELETE FROM ChiTietHoaDon WHERE MaHD=@ma", ps)
-            ' 2) Xóa header
             Exec("DELETE FROM HoaDon WHERE MaHD=@ma", ps)
             MessageBox.Show("Đã xóa hóa đơn.")
             txtMaHD.Clear()

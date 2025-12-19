@@ -4,7 +4,6 @@ Public Class frmLichHen
 
 
     Private Sub frmLichHen_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Hiển thị chào user
         lblHello.Text = "Xin chào, " & CurrentUser & If(CurrentRole = "Admin", " (Admin)", " (NV)")
         lblDate.Text = DateTime.Now.ToString("dd/MM/yyyy")
         dgvLich.AllowUserToAddRows = False
@@ -28,7 +27,6 @@ Public Class frmLichHen
         txtGhiChu.Text = If(IsDBNull(r.Cells("GhiChu").Value), "", r.Cells("GhiChu").Value.ToString())
     End Sub
     Private Sub LoadCombos()
-        ' Khách hàng
         Dim kh = GetTable("SELECT MaKH, TenKH FROM KhachHang ORDER BY TenKH")
         cboKhachHang.DataSource = kh : cboKhachHang.DisplayMember = "TenKH" : cboKhachHang.ValueMember = "MaKH"
 
@@ -84,9 +82,6 @@ Public Class frmLichHen
             txtGhiChu.Text = If(IsDBNull(.Cells("GhiChu").Value), "", .Cells("GhiChu").Value.ToString())
         End With
     End Sub
-
-
-
     Private Sub PictureBox10_Click(sender As Object, e As EventArgs) Handles PictureBox10.Click
         Me.Close()
     End Sub
@@ -102,7 +97,6 @@ Public Class frmLichHen
         txtGhiChu.Clear()
         cboKhachHang.Focus()
     End Sub
-
     Private Sub PictureBox6_Click(sender As Object, e As EventArgs) Handles PictureBox6.Click
         If String.IsNullOrWhiteSpace(txtMaLich.Text) Then
             MessageBox.Show("Chưa chọn lịch hẹn.") : Return
@@ -117,7 +111,6 @@ Public Class frmLichHen
             Exec("DELETE FROM LichHen WHERE MaLich=@ma", ps)
             MessageBox.Show("Đã xóa lịch hẹn.")
         Catch ex As SqlClient.SqlException
-            ' Nếu lịch đã được dùng nơi khác (ví dụ gắn vào hóa đơn…) → không xóa cứng
             If ex.Number = 547 Then
                 Exec("UPDATE LichHen SET TrangThai=N'Hủy' WHERE MaLich=@ma", ps)
                 MessageBox.Show("Lịch hẹn đã phát sinh dữ liệu. Đã chuyển trạng thái thành 'Hủy'.")
@@ -126,20 +119,17 @@ Public Class frmLichHen
             End If
         End Try
 
-        LoadGrid() ' nạp lại danh sách
+        LoadGrid()
     End Sub
 
     Private Sub PictureBox5_Click(sender As Object, e As EventArgs) Handles PictureBox5.Click
-        '=== VALIDATE ===
         If cboKhachHang.SelectedValue Is Nothing Then MessageBox.Show("Chọn Khách hàng.") : Return
         If cboNhanVien.SelectedValue Is Nothing Then MessageBox.Show("Chọn Nhân viên.") : Return
         If cboDichVu.SelectedValue Is Nothing Then MessageBox.Show("Chọn Dịch vụ.") : Return
         If String.IsNullOrWhiteSpace(cboGio.Text) Then MessageBox.Show("Chọn giờ hẹn.") : Return
-        '=== /VALIDATE ===
         If cboKhachHang.SelectedValue Is Nothing OrElse cboNhanVien.SelectedValue Is Nothing OrElse cboDichVu.SelectedValue Is Nothing Then
             MessageBox.Show("Chọn đủ Khách hàng, Nhân viên, Dịch vụ.") : Return
         End If
-        '=== CHECK TRÙNG SLOT ===
         Dim psCheck = New List(Of SqlClient.SqlParameter) From {
     New SqlClient.SqlParameter("@ma", If(String.IsNullOrEmpty(txtMaLich.Text), CType(DBNull.Value, Object), CInt(txtMaLich.Text))),
     New SqlClient.SqlParameter("@nv", CInt(cboNhanVien.SelectedValue)),
@@ -155,7 +145,6 @@ Public Class frmLichHen
         If tr > 0 Then
             MessageBox.Show("Nhân viên này đã có lịch ở khung giờ đó.") : Return
         End If
-        '=== /CHECK TRÙNG SLOT ===
 
         Dim ps As New List(Of SqlParameter) From {
             New SqlParameter("@kh", CInt(cboKhachHang.SelectedValue)),
@@ -168,13 +157,11 @@ Public Class frmLichHen
         }
 
         If String.IsNullOrEmpty(txtMaLich.Text) Then
-            ' INSERT
             Dim sqlI = "INSERT INTO LichHen(MaKH,MaNV,MaDV,Ngay,Gio,TrangThai,GhiChu)
                     VALUES(@kh,@nv,@dv,@ngay,@gio,@tt,@gc)"
             Exec(sqlI, ps)
             MessageBox.Show("Đã thêm lịch hẹn.")
         Else
-            ' UPDATE
             ps.Add(New SqlParameter("@ma", CInt(txtMaLich.Text)))
             Dim sqlU = "UPDATE LichHen SET MaKH=@kh,MaNV=@nv,MaDV=@dv,Ngay=@ngay,Gio=@gio,TrangThai=@tt,GhiChu=@gc
                     WHERE MaLich=@ma"
@@ -197,7 +184,6 @@ Public Class frmLichHen
         Me.Close()
     End Sub
 
-    ' Gọi 1 lần (Form_Load)
     Private Sub LoadTrangThai()
         Dim data = New List(Of Object) From {
             New With {.Text = "Đặt", .Val = 0},
@@ -210,7 +196,6 @@ Public Class frmLichHen
         cboTrangThai.SelectedIndex = -1
     End Sub
 
-    ' Imports System.Data.SqlClient
     Private Sub PictureBox4_Click(sender As Object, e As EventArgs) Handles PictureBox4.Click
         If String.IsNullOrWhiteSpace(txtMaLich.Text) Then
             MessageBox.Show("Hãy chọn 1 lịch hẹn trước khi sửa.") : Exit Sub
@@ -228,7 +213,7 @@ Public Class frmLichHen
         Dim sql As String =
     "UPDATE LichHen
  SET MaKH=@MaKH, MaNV=@MaNV, Ngay=@Ngay, Gio=@Gio, MaDV=@MaDV, GhiChu=@GhiChu, TrangThai=@TrangThai
- WHERE MaLich=@MaLich"    ' <-- dùng MaLich + @MaLich
+ WHERE MaLich=@MaLich"
 
         Dim prms As New List(Of SqlParameter) From {
             New SqlParameter("@MaLich", CInt(txtMaLich.Text)),                     ' <-- thêm đúng tham số

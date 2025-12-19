@@ -1,7 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Public Class frmNhanVien
     Private Sub frmNhanVien_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Hiển thị chào user
         lblHello.Text = "Xin chào, " & CurrentUser & If(CurrentRole = "Admin", " (Admin)", " (NV)")
         lblDate.Text = DateTime.Now.ToString("dd/MM/yyyy")
         dgvNV.AllowUserToAddRows = False
@@ -95,7 +94,6 @@ Public Class frmNhanVien
     End Sub
 
     Private Sub pbSua_Click(sender As Object, e As EventArgs) Handles pbSua.Click
-        ' === VALIDATE ===
         If String.IsNullOrWhiteSpace(txtMaNV.Text) Then
             MessageBox.Show("Hãy chọn 1 nhân viên trước khi sửa.") : Exit Sub
         End If
@@ -106,7 +104,6 @@ Public Class frmNhanVien
         If sdt <> "" AndAlso Not System.Text.RegularExpressions.Regex.IsMatch(sdt, "^\d{9,11}$") Then
             MessageBox.Show("Số điện thoại không hợp lệ (9–11 số).") : txtSDT.Focus() : Exit Sub
         End If
-        ' === /VALIDATE ===
 
         Dim sql As String =
     "UPDATE NhanVien
@@ -125,7 +122,7 @@ Public Class frmNhanVien
         }
 
         Try
-            Dim n = Exec(sql, ps)   ' dùng đúng hàm Exec của bạn
+            Dim n = Exec(sql, ps)
             If n > 0 Then
                 MessageBox.Show("Đã cập nhật nhân viên.")
                 LoadGrid()

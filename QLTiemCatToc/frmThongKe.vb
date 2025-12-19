@@ -33,7 +33,6 @@ Public Class frmThongKe
     End Sub
 
     Private Sub frmThongKe_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Hiển thị chào user
         lblHello.Text = "Xin chào, " & CurrentUser & If(CurrentRole = "Admin", " (Admin)", " (NV)")
         lblDate.Text = DateTime.Now.ToString("dd/MM/yyyy")
         With dgvTK
@@ -48,7 +47,6 @@ Public Class frmThongKe
         End With
     End Sub
 
-    ' đặt nhanh khoảng ngày rồi gọi lại Xem
     Private Sub SetRangeAndView(d1 As Date, d2 As Date)
         dtpFrom.Value = d1
         dtpTo.Value = d2

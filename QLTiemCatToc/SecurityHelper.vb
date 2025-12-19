@@ -7,7 +7,7 @@ Module SecurityHelper
             Dim bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(input))
             Dim sb As New StringBuilder()
             For Each b In bytes
-                sb.Append(b.ToString("X2")) ' X2 = hex in hoa
+                sb.Append(b.ToString("X2"))
             Next
             Return sb.ToString()
         End Using

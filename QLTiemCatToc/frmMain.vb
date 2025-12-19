@@ -4,32 +4,25 @@ Imports System.Data.SqlClient
 Public Class frmMain
     Private Sub frmMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         RefreshDashboard()
-        ' Hiển thị chào user
         lblHello.Text = "Xin chào, " & CurrentUser & If(CurrentRole = "Admin", " (Admin)", " (NV)")
 
-        ' Phân quyền: Nhân viên (NV) bị ẩn Thống kê, Hóa đơn vẫn xem được
         If CurrentRole <> "Admin" Then
             cardThongKe.Enabled = False
             cardThongKe.Visible = False
-            ' (tuỳ chọn) ẩn cả nút Thoát/Khác nếu bạn muốn
-            ' cardHoaDon.Enabled = True  ' vẫn cho vào xem/ghi
+
         End If
         lblDate.Text = DateTime.Now.ToString("dd/MM/yyyy")
     End Sub
 
     Private Sub RefreshDashboard()
-        ' 1) Tổng KH
         lblKH.Text = GetTable("SELECT COUNT(*) FROM KhachHang").Rows(0)(0).ToString()
 
-        ' 2) Lịch hẹn hôm nay
         Dim psLH = New List(Of SqlParameter) From {New SqlParameter("@d", Date.Today)}
         lblLH.Text = GetTable("SELECT COUNT(*) FROM LichHen WHERE Ngay=@d", psLH).Rows(0)(0).ToString()
 
-        ' 3) Hoàn thành hôm nay
         Dim psDone = New List(Of SqlParameter) From {New SqlParameter("@d", Date.Today)}
         lblDone.Text = GetTable("SELECT COUNT(*) FROM LichHen WHERE Ngay=@d AND TrangThai=N'Hoàn tất'", psDone).Rows(0)(0).ToString()
 
-        ' 4) Doanh thu hôm nay
         Dim psDT = New List(Of SqlParameter) From {New SqlParameter("@d", Date.Today)}
         Dim t = GetTable("
             SELECT SUM(v.TongThanhToan)
@@ -39,14 +32,12 @@ Public Class frmMain
         lblDoanhThu.Text = String.Format("{0:N0}", total)
     End Sub
 
-    ' LƯU Ý: mỗi card chỉ có 1 Handles duy nhất của chính nó
-
     Private Sub cardKhachHang_DoubleClick(sender As Object, e As EventArgs) Handles cardKhachHang.DoubleClick
         Using f As New frmKhachHang()
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -55,7 +46,7 @@ Public Class frmMain
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRSSUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -74,7 +65,7 @@ Public Class frmMain
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRSSUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -93,7 +84,7 @@ Public Class frmMain
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRSSUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -112,7 +103,7 @@ Public Class frmMain
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRSSUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -131,7 +122,7 @@ Public Class frmMain
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRSSUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -149,7 +140,7 @@ Public Class frmMain
             Me.Hide()
             f.StartPosition = FormStartPosition.CenterParent
             f.ShowInTaskbar = False
-            f.ShowDialog(Me)      ' TRSSUYỀN OWNER
+            f.ShowDialog(Me)
             Me.Show() : Me.Activate()
         End Using
     End Sub
@@ -162,26 +153,21 @@ Public Class frmMain
     End Sub
 
     Private Sub btnLogout_Click(sender As Object, e As EventArgs) Handles PictureBox10.Click, Label2.Click
-        ' Xác nhận
         If MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Đăng xuất",
                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.No Then
             Return
         End If
 
-        ' Reset biến toàn cục
         CurrentUser = ""
         CurrentRole = ""
 
-        ' Đóng form Main
         Me.Hide()
 
-        ' Quay về form Đăng nhập
         Using f As New frmDangNhap()
             f.StartPosition = FormStartPosition.CenterScreen
             f.ShowDialog()
         End Using
 
-        ' Sau khi form Đăng nhập đóng thì thoát hẳn
         Me.Close()
     End Sub
 

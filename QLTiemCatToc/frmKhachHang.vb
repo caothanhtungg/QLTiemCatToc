@@ -12,7 +12,6 @@ Public Class frmKhachHang
         dgvKH.DataSource = GetTable(sql, ps)
     End Sub
     Private Sub frmKhachHang_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Hiển thị chào user
         lblHello.Text = "Xin chào, " & CurrentUser & If(CurrentRole = "Admin", " (Admin)", " (NV)")
         lblDate.Text = DateTime.Now.ToString("dd/MM/yyyy")
         LoadGrid()
@@ -40,9 +39,8 @@ Public Class frmKhachHang
         If txtTim.Text.Length = 0 Then LoadGrid()
     End Sub
     Private Function IsValidPhone(s As String) As Boolean
-        Return Regex.IsMatch(s, "^(0[0-9]{9,10})$") ' 10–11 số, bắt đầu bằng 0
+        Return Regex.IsMatch(s, "^(0[0-9]{9,10})$")
     End Function
-    ''chặn gõ chữ vào SĐT
     Private Sub txtSDT_KeyPress(sender As Object, e As KeyPressEventArgs) Handles txtSDT.KeyPress
         If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then e.Handled = True
     End Sub
@@ -59,7 +57,6 @@ Public Class frmKhachHang
         dgv.AllowUserToAddRows = False
         dgv.AllowUserToResizeRows = False
 
-        ' Định dạng cột nếu trùng tên trong ảnh
         If dgv.Columns.Contains("NgaySinh") Then
             dgv.Columns("NgaySinh").DefaultCellStyle.Format = "dd/MM/yyyy"
         End If
@@ -67,7 +64,6 @@ Public Class frmKhachHang
             dgv.Columns("SDT").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
 
-        ' Chống nhấp nháy khi cuộn (double-buffer)
         Dim t = dgv.GetType()
         Dim pi = t.GetProperty("DoubleBuffered", Reflection.BindingFlags.Instance Or Reflection.BindingFlags.NonPublic)
         If pi IsNot Nothing Then pi.SetValue(dgv, True, Nothing)
@@ -134,12 +130,10 @@ Public Class frmKhachHang
     }
         Try
             If isEdit = False Then
-                ' 👉 THÊM
                 Exec("INSERT INTO KhachHang(TenKH,SDT,GioiTinh,NgaySinh,GhiChu)
                   VALUES(@Ten,@SDT,@GT,@NS,@GC)", ps)
                 MessageBox.Show("Đã thêm khách hàng.")
             Else
-                ' 👉 SỬA
                 ps.Add(New SqlParameter("@Ma", CInt(txtMaKH.Text)))
                 Exec("UPDATE KhachHang
                   SET TenKH=@Ten, SDT=@SDT, GioiTinh=@GT, NgaySinh=@NS, GhiChu=@GC
