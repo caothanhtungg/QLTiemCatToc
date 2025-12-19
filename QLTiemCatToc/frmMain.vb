@@ -204,4 +204,8 @@ Public Class frmMain
     Private Sub cardDichVu_Paint(sender As Object, e As PaintEventArgs) Handles cardDichVu.Paint
 
     End Sub
+
+    Private Sub Label14_Click(sender As Object, e As EventArgs) Handles Label14.Click
+
+    End Sub
 End Class

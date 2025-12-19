@@ -295,7 +295,7 @@ Partial Class frmThongKe
         Me.lblTBHD.AutoSize = True
         Me.lblTBHD.Font = New System.Drawing.Font("Segoe UI", 18.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblTBHD.ForeColor = System.Drawing.Color.White
-        Me.lblTBHD.Location = New System.Drawing.Point(98, 42)
+        Me.lblTBHD.Location = New System.Drawing.Point(56, 42)
         Me.lblTBHD.Name = "lblTBHD"
         Me.lblTBHD.Size = New System.Drawing.Size(50, 32)
         Me.lblTBHD.TabIndex = 0

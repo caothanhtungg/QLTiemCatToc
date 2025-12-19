@@ -106,61 +106,53 @@ Public Class frmKhachHang
     Private Sub btnHuy_Click(sender As Object, e As EventArgs)
 
     End Sub
-
+    Private isEdit As Boolean = False
     Private Sub PictureBox3_Click(sender As Object, e As EventArgs) Handles PictureBox3.Click
-        txtMaKH.Clear() : txtTen.Clear() : txtSDT.Clear() : txtGhiChu.Clear()
-        cboGioiTinh.SelectedIndex = -1 : dtpNgaySinh.Checked = False
+        txtMaKH.Clear()
+        txtTen.Clear()
+        txtSDT.Clear()
+        txtGhiChu.Clear()
+        cboGioiTinh.SelectedIndex = -1
+        dtpNgaySinh.Checked = False
+        isEdit = False
         txtTen.Focus()
     End Sub
-
     Private Sub PictureBox5_Click(sender As Object, e As EventArgs) Handles PictureBox5.Click
-        ' 1) Validate
         If txtTen.Text.Trim = "" Then
             MessageBox.Show("Tên bắt buộc.") : txtTen.Focus() : Return
         End If
         If txtSDT.Text.Trim = "" OrElse Not IsValidPhone(txtSDT.Text.Trim) Then
-            MessageBox.Show("SĐT không hợp lệ (bắt đầu bằng 0, 10-11 số).")
+            MessageBox.Show("SĐT không hợp lệ.")
             txtSDT.Focus() : Return
         End If
-        If dtpNgaySinh.Checked AndAlso dtpNgaySinh.Value.Date > Date.Today Then
-            MessageBox.Show("Ngày sinh không được lớn hơn hôm nay.")
-            dtpNgaySinh.Focus() : Return
-        End If
-        ' 2) Tham số chung
         Dim ps As New List(Of SqlParameter) From {
         New SqlParameter("@Ten", txtTen.Text.Trim),
         New SqlParameter("@SDT", txtSDT.Text.Trim),
-        New SqlParameter("@GT", If(String.IsNullOrEmpty(cboGioiTinh.Text), CType(DBNull.Value, Object), cboGioiTinh.Text)),
+        New SqlParameter("@GT", If(cboGioiTinh.Text = "", CType(DBNull.Value, Object), cboGioiTinh.Text)),
         New SqlParameter("@NS", If(dtpNgaySinh.Checked, CType(dtpNgaySinh.Value.Date, Object), DBNull.Value)),
-        New SqlParameter("@GC", If(String.IsNullOrWhiteSpace(txtGhiChu.Text), CType(DBNull.Value, Object), txtGhiChu.Text.Trim))
+        New SqlParameter("@GC", If(txtGhiChu.Text.Trim = "", CType(DBNull.Value, Object), txtGhiChu.Text.Trim))
     }
-
-        ' 3) Thêm / Sửa
         Try
-            If String.IsNullOrEmpty(txtMaKH.Text) Then
+            If isEdit = False Then
+                ' 👉 THÊM
                 Exec("INSERT INTO KhachHang(TenKH,SDT,GioiTinh,NgaySinh,GhiChu)
                   VALUES(@Ten,@SDT,@GT,@NS,@GC)", ps)
                 MessageBox.Show("Đã thêm khách hàng.")
             Else
+                ' 👉 SỬA
                 ps.Add(New SqlParameter("@Ma", CInt(txtMaKH.Text)))
                 Exec("UPDATE KhachHang
                   SET TenKH=@Ten, SDT=@SDT, GioiTinh=@GT, NgaySinh=@NS, GhiChu=@GC
                   WHERE MaKH=@Ma", ps)
                 MessageBox.Show("Đã cập nhật khách hàng.")
             End If
+
+            LoadGrid()
+            isEdit = False
         Catch ex As SqlException
-            ' Nếu có UNIQUE SDT
-            If ex.Number = 2627 OrElse ex.Message.Contains("UNIQUE") Then
-                MessageBox.Show("SĐT đã tồn tại.") : txtSDT.Focus()
-            Else
-                MessageBox.Show("Lỗi: " & ex.Message)
-            End If
+            MessageBox.Show("Lỗi: " & ex.Message)
         End Try
-
-        ' 4) Refresh lưới
-        LoadGrid()
     End Sub
-
     Private Sub PictureBox6_Click(sender As Object, e As EventArgs) Handles PictureBox6.Click
         If txtMaKH.Text = "" Then
             MessageBox.Show("Chưa chọn khách hàng để xóa.") : Return
@@ -186,49 +178,11 @@ Public Class frmKhachHang
     End Sub
 
     Private Sub PictureBox4_Click(sender As Object, e As EventArgs) Handles PictureBox4.Click
-        ' Kiểm tra chọn dòng + dữ liệu tối thiểu
         If String.IsNullOrWhiteSpace(txtMaKH.Text) Then
-            MessageBox.Show("Hãy chọn 1 khách hàng trong bảng trước khi sửa.")
-            Exit Sub
+            MessageBox.Show("Hãy chọn khách hàng cần sửa.")
+            Return
         End If
-        If String.IsNullOrWhiteSpace(txtTen.Text) Then
-            MessageBox.Show("Tên khách hàng không được để trống.")
-            txtTen.Focus() : Exit Sub
-        End If
-        ' Kiểm tra SĐT đơn giản (9–11 số) – tùy bạn
-        Dim sdt = txtSDT.Text.Trim()
-        If sdt <> "" AndAlso Not System.Text.RegularExpressions.Regex.IsMatch(sdt, "^\d{9,11}$") Then
-            MessageBox.Show("Số điện thoại không hợp lệ (9–11 số).")
-            txtSDT.Focus() : Exit Sub
-        End If
-
-        ' UPDATE
-        Dim sql As String =
-    "UPDATE KhachHang
-SET TenKH=@TenKH, SDT=@SDT, GioiTinh=@GioiTinh, NgaySinh=@NgaySinh, GhiChu=@GhiChu
-WHERE MaKH=@MaKH"
-
-        Dim ps As New List(Of SqlClient.SqlParameter) From {
-            New SqlClient.SqlParameter("@MaKH", txtMaKH.Text.Trim()),
-            New SqlClient.SqlParameter("@TenKH", txtTen.Text.Trim()),
-            New SqlClient.SqlParameter("@SDT", If(sdt = "", CType(DBNull.Value, Object), sdt)),
-            New SqlClient.SqlParameter("@GioiTinh", If(String.IsNullOrWhiteSpace(cboGioiTinh.Text), CType(DBNull.Value, Object), cboGioiTinh.Text)),
-            New SqlClient.SqlParameter("@NgaySinh", dtpNgaySinh.Value.Date),
-            New SqlClient.SqlParameter("@GhiChu", If(String.IsNullOrWhiteSpace(txtGhiChu.Text), CType(DBNull.Value, Object), txtGhiChu.Text.Trim()))
-        }
-
-        Try
-            Exec(sql, ps)                 ' dùng hàm NonQuery sẵn có của bạn
-            LoadGrid(txtTim.Text.Trim())     ' reload bảng (giữ keyword nếu có)
-            MessageBox.Show("Đã cập nhật khách hàng.")
-        Catch ex As SqlClient.SqlException
-            If ex.Number = 2627 OrElse ex.Number = 2601 Then
-                MessageBox.Show("SĐT đã tồn tại (trùng unique).")
-            Else
-                MessageBox.Show("Lỗi SQL: " & ex.Message)
-            End If
-        Catch ex As Exception
-            MessageBox.Show("Lỗi: " & ex.Message)
-        End Try
+        isEdit = True
+        txtTen.Focus()
     End Sub
 End Class
